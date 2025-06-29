@@ -1,22 +1,28 @@
+
 import { ImportLog } from '@/types';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { notFound } from 'next/navigation';
 
-interface ImportLogDetailProps {
+
+type Props = {
   params: { id: string };
-}
+};
+
 
 async function getImportLog(id: string): Promise<ImportLog> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/import-history/${id}`, {
     cache: 'no-store',
   });
-  if (!res.ok) throw new Error('Failed to fetch import log');
+
+  if (!res.ok) notFound(); 
   return res.json();
 }
 
-export default async function ImportLogDetail({ params }: ImportLogDetailProps) {
+
+export default async function ImportLogDetail({ params }: Props) {
   const log = await getImportLog(params.id);
 
   return (
