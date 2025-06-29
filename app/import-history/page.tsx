@@ -8,7 +8,6 @@ import type { ImportLog } from "@/types";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
 
-
 async function getImportLogs(): Promise<ImportLog[]> {
   const res = await fetch(`${BACKEND_URL}/api/import-history`, {
     cache: "no-store",
@@ -32,8 +31,12 @@ export default function ImportHistoryPage() {
       try {
         const logs = await getImportLogs();
         setImportLogs(logs);
-      } catch (err: any) {
-        setError(err.message || "Something went wrong.");
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Something went wrong.");
+        }
       } finally {
         setIsLoading(false);
       }

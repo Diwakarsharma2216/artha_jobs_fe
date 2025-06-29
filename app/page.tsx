@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Loader2 } from 'lucide-react'; // Optional: for spinner icon
+import { Loader2 } from 'lucide-react'; 
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
@@ -18,11 +18,16 @@ export default function Home() {
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/jobs/trigger-import`);
       const data = await res.json();
-      setMessage(data.message || '✅ Import started!');
-    } catch (err: any) {
-      setMessage('❌ Failed to start import');
+      setMessage(data.message || 'Import started!');
+    } catch (err: unknown) {
       setError(true);
-      console.error(err);
+      if (err instanceof Error) {
+        console.error(err.message);
+        setMessage(err.message);
+      } else {
+        console.error(err);
+        setMessage('Failed to start import');
+      }
     } finally {
       setLoading(false);
     }
